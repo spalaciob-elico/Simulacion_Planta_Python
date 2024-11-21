@@ -20,7 +20,7 @@ class Reactor:
         # Parameters
         self.T0 = 31
         self.Tj0 = 47.7322203151538
-        self.av = 0.5
+        self.av = 0.433255
         self.Tc = 2
         self.Th = 95
         self.F = 40
