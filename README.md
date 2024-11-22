@@ -32,5 +32,7 @@ Ejecute cualquiera de las simulaciones:
 La ventana de simulación aparecerá con gráficas de temperatura e interfaz de control.
 
 Lazo abierto: Ajuste manualmente la posición de la válvula usando el deslizador
+![image](https://github.com/user-attachments/assets/d991f84b-cb0a-41ee-b12c-73d8375cafb5)
 
 Control PID: Modifique los parámetros PID y el punto de ajuste según sea necesario
+![image](https://github.com/user-attachments/assets/8f44c01a-276b-4931-a0db-ceb8d9f10bc3)
