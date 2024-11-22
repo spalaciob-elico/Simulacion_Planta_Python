@@ -6,7 +6,7 @@ import tkinter as tk
 from tkinter import ttk
 
 class PIDController:
-    def __init__(self, Kp=0.03, Ki=0.00004, Kd=0.0005, initial_av=0.433255):
+    def __init__(self, Kp=0.05, Ki=0.001, Kd=0.5, initial_av=0.433255):
         self.Kp = Kp
         self.Ki = Ki
         self.Kd = Kd
@@ -16,6 +16,9 @@ class PIDController:
         # Control limits
         self.output_min = 0.0
         self.output_max = 1.0
+        # Add anti-windup limits
+        self.integral_min = 0
+        self.integral_max = 1000.0
         self.reset()
 
     def reset(self):
@@ -37,21 +40,23 @@ class PIDController:
         
         # Calculate terms
         P = self.Kp * error
-        self.integral += error * dt
+        
+        # Anti-windup: Only integrate if not saturated or if error will reduce saturation
+        self.integral = np.clip(self.integral + error * dt, self.integral_min, self.integral_max)
+        I = self.Ki * self.integral
+        
         derivative = (error - self.last_error) / dt
+        D = self.Kd * derivative
         
         # Print individual components
         print(f"P term: {P:.6f}")
-        print(f"I term: {(self.Ki * self.integral):.6f}")
-        print(f"D term: {(self.Kd * derivative):.6f}")
-        
+        print(f"I term: {I:.6f}")
+        print(f"D term: {D:.6f}")
+        print(f"Integral value: {self.integral:.6f}")
         
         # Calculate output with limits
-        output = P + self.Ki * self.integral + self.Kd * derivative
-
-        # Print the output before limiting
+        output = P + I + D
         print(f"Output (before limiting): {output:.6f}")
-
         output = np.clip(output, self.output_min, self.output_max)
         
         print(f"Final valve position (av): {output:.6f}")
@@ -181,6 +186,7 @@ class Plotter:
         self.T_values = []
         self.Tj_values = []
         self.av_values = []  # Add av values array
+        self.setpoint_values = []  # Add array to store setpoint history
         self.setpoint_line = None
         self._setup_plots()
         
@@ -202,7 +208,7 @@ class Plotter:
         self.setpoint_line, = plt.plot([], [], 'r--', label="Setpoint")
         plt.legend()
         plt.xlim(0, self.window_size)
-        plt.ylim(0, 100)
+        plt.ylim(10, 90)
         
         # Second subplot (Jacket Temperature)
         plt.subplot(3,1,2)  # Changed to 3,1,2
@@ -213,7 +219,7 @@ class Plotter:
         self.line2, = plt.plot([], [], label="Jacket Temperature (Tj)")
         plt.legend()
         plt.xlim(0, self.window_size)
-        plt.ylim(0, 100)
+        plt.ylim(10, 90)
         
         # New third subplot (Valve Position)
         plt.subplot(3,1,3)
@@ -231,14 +237,15 @@ class Plotter:
         self.T_values.append(T)
         self.Tj_values.append(Tj)
         self.av_values.append(self.reactor.av)  # Add av value
+        self.setpoint_values.append(self.reactor.controller.setpoint)  # Store current setpoint
         
         self.line1.set_data(self.time_values, self.T_values)
         self.line2.set_data(self.time_values, self.Tj_values)
         self.line3.set_data(self.time_values, self.av_values)  # Update av plot
         
+        # Update setpoint line with historical values
         if self.setpoint_line:
-            self.setpoint_line.set_data([self.time_values[0], self.time_values[-1]], 
-                                      [self.reactor.controller.setpoint, self.reactor.controller.setpoint])
+            self.setpoint_line.set_data(self.time_values, self.setpoint_values)
         
         if t > self.window_size:
             for i in range(1, 4):  # Update all three subplots
@@ -255,9 +262,10 @@ class Plotter:
         plt.title(f"Jacket Temperature Over Time")
 
     def update_setpoint(self, setpoint):
+        # No need to modify historical values
+        self.setpoint_values[-1] = setpoint  # Update only the latest value
         if self.time_values:
-            self.setpoint_line.set_data([self.time_values[0], self.time_values[-1]], 
-                                      [setpoint, setpoint])
+            self.setpoint_line.set_data(self.time_values, self.setpoint_values)
             plt.draw()
 
 class Simulation:
