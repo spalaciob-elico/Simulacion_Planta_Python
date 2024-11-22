@@ -33,10 +33,10 @@ class PIDController:
         if dt <= 0: dt = 0.1
         
         error = self.setpoint - current_value
-        print(f"\nTime: {current_time:.2f}s")
-        print(f"Current Temperature: {current_value:.2f}°C")
-        print(f"Setpoint: {self.setpoint}°C")
-        print(f"Error: {error:.2f}°C")
+        #print(f"\nTime: {current_time:.2f}s")
+        #print(f"Current Temperature: {current_value:.2f}°C")
+        #print(f"Setpoint: {self.setpoint}°C")
+        #print(f"Error: {error:.2f}°C")
         
         # Calculate terms
         P = self.Kp * error
@@ -48,19 +48,19 @@ class PIDController:
         derivative = (error - self.last_error) / dt
         D = self.Kd * derivative
         
-        # Print individual components
-        print(f"P term: {P:.6f}")
-        print(f"I term: {I:.6f}")
-        print(f"D term: {D:.6f}")
-        print(f"Integral value: {self.integral:.6f}")
+        # #print individual components
+        #print(f"P term: {P:.6f}")
+        #print(f"I term: {I:.6f}")
+        #print(f"D term: {D:.6f}")
+        #print(f"Integral value: {self.integral:.6f}")
         
         # Calculate output with limits
         output = P + I + D
-        print(f"Output (before limiting): {output:.6f}")
+        #print(f"Output (before limiting): {output:.6f}")
         output = np.clip(output, self.output_min, self.output_max)
         
-        print(f"Final valve position (av): {output:.6f}")
-        print("-" * 50)
+        #print(f"Final valve position (av): {output:.6f}")
+        #print("-" * 50)
         
         self.last_error = error
         self.last_time = current_time

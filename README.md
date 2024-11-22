@@ -1,43 +1,36 @@
-![Simulacion_Lazo_Abierto](https://github.com/user-attachments/assets/b1bd077b-1115-4446-80ce-3a96c4a41f38)
+# Control de Temperatura del Reactor
 
-### Componentes Principales
+Una simulación en Python de un sistema de control de temperatura para un reactor químico, con implementaciones tanto de control en lazo abierto como control PID.
 
-1. Clase Reactor:
-- Maneja el modelo físico del reactor con temperaturas y flujos
-- Implementa ecuaciones diferenciales para transferencia de calor
-- Resuelve las ecuaciones paso a paso usando solve_ivp
+## Características
 
-- Contiene constantes físicas (cp, densidad, coeficientes de transferencia)
+- Simulación en tiempo real de temperaturas del reactor y de la camisa
+- Controles GUI interactivos para:
+  - Control en lazo abierto con ajuste manual de posición de válvula
+  - Control PID con parámetros ajustables (Kp, Ki, Kd)
+  - Modificación del punto de ajuste
+- Gráficas en tiempo real de:
+  - Temperatura del reactor
+  - Temperatura de la camisa
+  - Posición de la válvula (en modo control PID)
 
-2. Clase GUI:
-- Crea ventana de control con slider (0-1) para posición de válvula
-- Muestra valor actual de la válvula
-- Tiene botones de aplicar y salir
-- Actualiza parámetros del reactor en tiempo real
+## Archivos
 
-3. Clase Plotter:
-- Crea dos gráficos en tiempo real: temperaturas del reactor y chaqueta
-- Actualiza los gráficos con nuevos valores 
-- Mantiene una ventana deslizante de datos
-- Auto-escala conforme avanza el tiempo
+- `Simulacion_Reactor_Lazo_Abierto.py` - Simulación de control en lazo abierto
+- `Simulacion_Reactor_Controlador.py` - Simulación de control PID
 
-4. Clase Simulation:
-- Coordina todos los componentes
-- Ejecuta el bucle principal de simulación
-- Maneja tiempos y actualizaciones
-- Gestiona tiempo real vs tiempo de simulación
+## Dependencias
 
-### Flujo del Programa
-1. Crea instancia de simulación
-2. Abre ventana de control y gráficos
-3. Continuamente:
-   - Actualiza GUI
-   - Resuelve ecuaciones del reactor
-   - Actualiza gráficos
-   - Maneja pasos de tiempo
-4. Corre hasta que el usuario presione salir
+- NumPy
+- SciPy
+- Matplotlib
+- Tkinter
 
-El sistema simula un reactor químico con control de temperatura mediante posición de válvula (av), mostrando en tiempo real las respuestas de temperatura tanto del reactor como de la chaqueta de enfriamiento.
+## Uso
 
+Ejecute cualquiera de las simulaciones:
+La ventana de simulación aparecerá con gráficas de temperatura e interfaz de control.
 
+Lazo abierto: Ajuste manualmente la posición de la válvula usando el deslizador
 
+Control PID: Modifique los parámetros PID y el punto de ajuste según sea necesario
